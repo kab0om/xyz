@@ -1,16 +1,28 @@
 package xyz;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
  * Created by kab00m on 03.09.15.
  */
-public class Row {
+@Entity
+@Table(name = "MyTable")
+public class Row implements Serializable {
+
+    @Id
+    @Column(length = 50)
     private BigInteger id;
+    @Column(length = 255)
     private String title;
+    @Column(length = 500)
     private String description;
+    @Column(length = 255)
     private String link;
+    @Column(length = 128)
     private String price;
+    @Column(length = 128)
     private String creationDate;
 
     public BigInteger getId() {
@@ -59,5 +71,17 @@ public class Row {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Row{" +
+                "id=" + id +
+                ", creationDate='" + creationDate + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", link='" + link + '\'' +
+                ", price='" + price + '\'' +
+                '}';
     }
 }
