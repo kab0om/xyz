@@ -24,6 +24,8 @@ public class Row implements Serializable {
     private String price;
     @Column(length = 128)
     private String creationDate;
+    @Column(length = 255)
+    private String categoryLocation;
 
     public BigInteger getId() {
         return id;
@@ -73,15 +75,24 @@ public class Row implements Serializable {
         this.creationDate = creationDate;
     }
 
+    public String getCategoryLocation() {
+        return categoryLocation;
+    }
+
+    public void setCategoryLocation(String categoryLocation) {
+        this.categoryLocation = categoryLocation;
+    }
+
     @Override
     public String toString() {
         return "Row{" +
                 "id=" + id +
-                ", creationDate='" + creationDate + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", link='" + link + '\'' +
+                "\n, creationDate='" + creationDate + '\'' +
                 ", price='" + price + '\'' +
+                ", categoryLocation='" + categoryLocation + '\'' +
+                "\n, title='" + title + '\'' +
+                "\n, description='" + description + '\'' +
+                "\n, link='" + link + '\'' +
                 '}';
     }
 }

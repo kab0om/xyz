@@ -4,6 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +24,13 @@ public class GumtreeParser implements Parsable {
 
     private List<BigInteger> idki = new ArrayList<>();
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public Collection parse(String url) throws IOException{
+        boolean pierwszeUruchomienie = false;
         idki.clear();
         Document doc = Jsoup.connect(url).get();
-
         Elements links = doc.select("section div div div ul li");
         Elements links2 = links.select("div.result-link");
 
@@ -34,7 +38,10 @@ public class GumtreeParser implements Parsable {
         for(Row r : rows) {
             idki.add(r.getId());
         }
-        System.out.println("idki.size()=" + idki.size());
+        if (idki.isEmpty()) {
+            pierwszeUruchomienie = true;
+        }
+        log.debug("idki.size()=" + idki.size());
 
         List<Row> list = new ArrayList<>();
         for (Element element : links) {
@@ -60,9 +67,18 @@ public class GumtreeParser implements Parsable {
             if (creationDate != null) {
                 r.setCreationDate(creationDate.text());
             }
+            Element categoryLocation = element.select("div.category-location").first();
+            if (categoryLocation != null) {
+                r.setCategoryLocation(categoryLocation.text());
+            }
+
             if(r.getId() != null && !idki.contains(r.getId())) {
-                list.add(r);
-                rowRepository.save(r);
+                if (pierwszeUruchomienie
+                        || (!pierwszeUruchomienie
+                            && r.getCreationDate().endsWith("min temu"))) {
+                    list.add(r);
+                    rowRepository.save(r);
+                }
             }
         }
 
@@ -74,7 +90,7 @@ public class GumtreeParser implements Parsable {
         });
 
         for (Row r : list){
-            System.out.println(r);
+            log.debug(r.toString());
         }
 
         return list;
