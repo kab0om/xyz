@@ -7,10 +7,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xyz.enums.CoGdzie;
 import xyz.enums.Source;
+import xyz.mail.EmailUsingGMailSMTPService;
 import xyz.parsers.GumtreeParser;
 import xyz.parsers.OlxParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by kab00m on 03.09.15.
@@ -21,6 +25,8 @@ public class ScheduleService {
     private GumtreeParser gumtreeParser;
     @Autowired
     private OlxParser olxParser;
+    @Autowired
+    private EmailUsingGMailSMTPService mailService;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -30,18 +36,30 @@ public class ScheduleService {
     public void doIt() {
         log.debug("run...");
         try {
+            Collection rows = new ArrayList<Row>();
             for (CoGdzie c : CoGdzie.values()) {
                 if (c.getSource() == Source.GUMTREE) {
-                    gumtreeParser.parse(c);
+                    rows.addAll(gumtreeParser.parse(c));
                 }
                 if (c.getSource() == Source.OLX) {
-                    olxParser.parse(c);
+                    rows.addAll(olxParser.parse(c));
                 }
+            }
+            if (!rows.isEmpty()) {
+                String subject = "test";
+                StringBuilder messageBody = new StringBuilder("<ul>");
+                List<Row> wiersze = (ArrayList<Row>)rows;
+                for(Row r : wiersze) {
+                    messageBody.append(r.toString());
+                    messageBody.append("\n---------------\n");
+                }
+                messageBody.append("ilość ogłoszeń: " + wiersze.size());
+                mailService.send(subject,messageBody.toString());
+
             }
 
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-
     }
 }

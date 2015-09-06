@@ -25,8 +25,6 @@ public class Controller {
     private GumtreeParser gumtreeParser;
     @Autowired
     private OlxParser olxParser;
-    @Autowired
-    private Sender sender;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -36,7 +34,7 @@ public class Controller {
         log.debug("doIt...");
 //        String targowekGumtreeUrl = CoGdzie.GUMTREE.getUrl();
 //        return gumtreeParser.parse(targowekGumtreeUrl);
-        sender.send(null);
+        //sender.send(null);
         return null;
     }
 
