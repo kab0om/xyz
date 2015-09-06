@@ -1,6 +1,6 @@
 package xyz.parsers;
 
-import xyz.CoGdzie;
+import xyz.enums.CoGdzie;
 
 import java.io.IOException;
 import java.util.Collection;

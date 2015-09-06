@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import xyz.enums.CoGdzie;
+import xyz.enums.Source;
 import xyz.parsers.GumtreeParser;
 import xyz.parsers.OlxParser;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by kab00m on 03.09.15.
@@ -31,10 +31,10 @@ public class ScheduleService {
         log.debug("run...");
         try {
             for (CoGdzie c : CoGdzie.values()) {
-                if (c == CoGdzie.GUMTREE) {
+                if (c.getSource() == Source.GUMTREE) {
                     gumtreeParser.parse(c);
                 }
-                if (c == CoGdzie.OLX) {
+                if (c.getSource() == Source.OLX) {
                     olxParser.parse(c);
                 }
             }
