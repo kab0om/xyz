@@ -43,7 +43,7 @@ public class OlxParser implements Parsable {
             pierwszeUruchomienie = true;
         }
 
-        log.debug("idki.size()=" + idki.size());
+        log.debug(coGdzie + "::idki.size()=" + idki.size());
 
         List<Row> list = new ArrayList<>();
 

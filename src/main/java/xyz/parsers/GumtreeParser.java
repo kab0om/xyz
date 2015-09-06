@@ -35,7 +35,6 @@ public class GumtreeParser implements Parsable {
         idki.clear();
         Document doc = Jsoup.connect(coGdzie.getUrl()).get();
         Elements links = doc.select("section div div div ul li");
-        Elements links2 = links.select("div.result-link");
 
         Iterable<Row> rows = rowRepository.findAll();
         for(Row r : rows) {
@@ -44,7 +43,7 @@ public class GumtreeParser implements Parsable {
         if (idki.isEmpty()) {
             pierwszeUruchomienie = true;
         }
-        log.debug("idki.size()=" + idki.size());
+        log.debug(coGdzie + "::idki.size()=" + idki.size());
 
         List<Row> list = new ArrayList<>();
         for (Element element : links) {
