@@ -29,81 +29,84 @@ public class OlxParser implements Parsable {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public Collection parse(CoGdzie coGdzie) throws IOException{
+    public Collection parse(CoGdzie coGdzie) {
         boolean pierwszeUruchomienie = false;
         idki.clear();
-        Document doc = Jsoup.connect(coGdzie.getUrl()).get();
-        Elements links = doc.select("table[summary$=Ogłoszenie]");//img[src$=.png]
-
-        Iterable<Row> rows = rowRepository.findAll();
-        for(Row r : rows) {
-            idki.add(r.getLink());
-        }
-        if (idki.isEmpty()) {
-            pierwszeUruchomienie = true;
-        }
-
-        log.debug(coGdzie + "::idki.size()=" + idki.size());
-
         List<Row> list = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect(coGdzie.getUrl()).get();
+            Elements links = doc.select("table[summary$=Ogłoszenie]");//img[src$=.png]
 
-        for (Element element : links) {
-           // log.debug("-- text=" + element.text() + ", href=" + element.attr("href"));
-            Row r = new Row();
-            r.setFilter(coGdzie.name());
-            r.setId(BigInteger.ZERO);
-            Element title = element.select("td div h3 a[href]").first();
-            //log.debug("title=" + title.text());
-            //log.debug("href=" + title.attr("href"));
-            r.setTitle(title.text());
-            r.setLink(title.attr("href"));
-
-            Element price = element.select("td div p[class$=price]").first();
-            //log.debug("price=" + price.text());
-            r.setPrice(price.text());
-
-            Element location = element.select("td div p[class] small span").first();
-            //log.debug("location=" + location.text());
-            r.setCategoryLocation(location.text());
-
-            Element date = element.select("td div p[class$=x-normal]").first();
-            //log.debug("date=" + date.text());
-            r.setCreationDate(date.text());
-
-            if (date.text() != null && date.text().startsWith("dzisiaj ")) {
-                String h = date.text().substring(8,10);
-                String m = date.text().substring(11, 13);
-                int hour = Integer.parseInt(h);
-                int minute = Integer.parseInt(m);
-                Calendar c = Calendar.getInstance();
-                c.setTime(new Date());
-                c.set(Calendar.HOUR_OF_DAY, hour);
-                c.set(Calendar.MINUTE, minute);
-                //log.debug("dateInMilis=" + c.getTimeInMillis());
-                r.setId(BigInteger.valueOf(c.getTimeInMillis()));
+            Iterable<Row> rows = rowRepository.findAll();
+            for (Row r : rows) {
+                idki.add(r.getLink());
+            }
+            if (idki.isEmpty()) {
+                pierwszeUruchomienie = true;
             }
 
-            if(r.getLink() != null && !idki.contains(r.getLink())) {
-                if (pierwszeUruchomienie
-                        || (!pierwszeUruchomienie
-                        && r.getCreationDate().startsWith("dzisiaj "))) {
-                    list.add(r);
-                    rowRepository.save(r);
+            log.debug(coGdzie + "::idki.size()=" + idki.size());
+
+            for (Element element : links) {
+                // log.debug("-- text=" + element.text() + ", href=" + element.attr("href"));
+                Row r = new Row();
+                r.setFilter(coGdzie.name());
+                r.setId(BigInteger.ZERO);
+                Element title = element.select("td div h3 a[href]").first();
+                //log.debug("title=" + title.text());
+                //log.debug("href=" + title.attr("href"));
+                r.setTitle(title.text());
+                r.setLink(title.attr("href"));
+
+                Element price = element.select("td div p[class$=price]").first();
+                //log.debug("price=" + price.text());
+                r.setPrice(price.text());
+
+                Element location = element.select("td div p[class] small span").first();
+                //log.debug("location=" + location.text());
+                r.setCategoryLocation(location.text());
+
+                Element date = element.select("td div p[class$=x-normal]").first();
+                //log.debug("date=" + date.text());
+                r.setCreationDateString(date.text());
+
+                if (date.text() != null && date.text().startsWith("dzisiaj ")) {
+                    String h = date.text().substring(8, 10);
+                    String m = date.text().substring(11, 13);
+                    int hour = Integer.parseInt(h);
+                    int minute = Integer.parseInt(m);
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(new Date());
+                    c.set(Calendar.HOUR_OF_DAY, hour);
+                    c.set(Calendar.MINUTE, minute);
+                    //log.debug("dateInMilis=" + c.getTimeInMillis());
+                    r.setId(BigInteger.valueOf(c.getTimeInMillis()));
+                    r.setCreationDate(c.getTime());
+                }
+
+                if (r.getLink() != null && !idki.contains(r.getLink())) {
+                    if (pierwszeUruchomienie
+                            || (!pierwszeUruchomienie
+                            && r.getCreationDateString().startsWith("dzisiaj "))) {
+                        list.add(r);
+                        rowRepository.save(r);
+                    }
                 }
             }
-        }
 
-        Collections.sort(list, new Comparator<Row>() {
-            @Override
-            public int compare(Row o1, Row o2) {
-                return o1.getId().compareTo(o2.getId());
+            Collections.sort(list, new Comparator<Row>() {
+                @Override
+                public int compare(Row o1, Row o2) {
+                    return o1.getId().compareTo(o2.getId());
+                }
+            });
+
+            for (Row r : list) {
+                log.debug(r.toString());
             }
-        });
-
-        for (Row r : list){
-            log.debug(r.toString());
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
-
         return list;
     }
 }

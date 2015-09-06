@@ -3,6 +3,7 @@ package xyz;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Date;
 
 /**
  * Created by kab00m on 03.09.15.
@@ -25,9 +26,10 @@ public class Row implements Serializable {
     @Column(length = 128)
     private String price;
     @Column(length = 128)
-    private String creationDate;
+    private String creationDateString;
     @Column(length = 255)
     private String categoryLocation;
+    private Date creationDate;
 
     public String getFilter() {
         return filter;
@@ -77,12 +79,12 @@ public class Row implements Serializable {
         this.price = price;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public String getCreationDateString() {
+        return creationDateString;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    public void setCreationDateString(String creationDateString) {
+        this.creationDateString = creationDateString;
     }
 
     public String getCategoryLocation() {
@@ -93,12 +95,20 @@ public class Row implements Serializable {
         this.categoryLocation = categoryLocation;
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @Override
     public String toString() {
         return "Row{" +
                 "id=" + id +
                 "\n filter=" + filter +
-                ", creationDate='" + creationDate + '\'' +
+                ", creationDateString='" + creationDateString + '\'' +
                 ", price='" + price + '\'' +
                 ", categoryLocation='" + categoryLocation + '\'' +
                 "\n, title='" + title + '\'' +

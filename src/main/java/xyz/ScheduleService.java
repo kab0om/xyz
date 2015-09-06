@@ -35,31 +35,28 @@ public class ScheduleService {
     //@Scheduled(fixedDelay = 600000)
     public void doIt() {
         log.debug("run...");
-        try {
-            Collection rows = new ArrayList<Row>();
-            for (CoGdzie c : CoGdzie.values()) {
-                if (c.getSource() == Source.GUMTREE) {
-                    rows.addAll(gumtreeParser.parse(c));
-                }
-                if (c.getSource() == Source.OLX) {
-                    rows.addAll(olxParser.parse(c));
-                }
+        Collection rows = new ArrayList<Row>();
+        for (CoGdzie c : CoGdzie.values()) {
+            if (c.getSource() == Source.GUMTREE) {
+                rows.addAll(gumtreeParser.parse(c));
             }
-            if (!rows.isEmpty()) {
-                String subject = "test";
-                StringBuilder messageBody = new StringBuilder("<ul>");
-                List<Row> wiersze = (ArrayList<Row>)rows;
-                for(Row r : wiersze) {
-                    messageBody.append(r.toString());
-                    messageBody.append("\n---------------\n");
-                }
-                messageBody.append("ilość ogłoszeń: " + wiersze.size());
-                mailService.send(subject,messageBody.toString());
-
+            if (c.getSource() == Source.OLX) {
+                rows.addAll(olxParser.parse(c));
             }
-
-        } catch (IOException e) {
-            log.error(e.getMessage());
         }
+        if (!rows.isEmpty()) {
+            String subject = "test";
+            StringBuilder messageBody = new StringBuilder("<ul>");
+            List<Row> wiersze = (ArrayList<Row>)rows;
+            for(Row r : wiersze) {
+                messageBody.append(r.toString());
+                messageBody.append("\n---------------\n");
+            }
+            messageBody.append("ilość ogłoszeń: " + wiersze.size());
+            mailService.send(subject,messageBody.toString());
+
+        }
+
+
     }
 }
