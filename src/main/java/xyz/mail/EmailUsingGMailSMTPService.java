@@ -2,7 +2,9 @@ package xyz.mail;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.props.MailProperties;
 
 import java.util.Properties;
 
@@ -18,12 +20,13 @@ import javax.mail.internet.MimeMessage;
 public class EmailUsingGMailSMTPService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private MailProperties mailProperties;
+
     public void send(String subject, String messageBody) {
         log.debug("sending...");
         String to = "mariusz.ciok@gmail.com";
         String from = "mariusz.ciok@gmail.com";
-        final String username = "mariusz.ciok";
-        final String password = "terefere19(9";
         final String host = "smtp.gmail.com";
         final String port = "587";
 
@@ -36,7 +39,7 @@ public class EmailUsingGMailSMTPService {
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(mailProperties.getUsername(), mailProperties.getPassword());
                     }
                 });
 
@@ -50,7 +53,7 @@ public class EmailUsingGMailSMTPService {
             Transport.send(message);
             log.debug("Sent message successfully....");
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 }

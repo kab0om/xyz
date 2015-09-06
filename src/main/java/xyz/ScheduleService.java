@@ -32,7 +32,7 @@ public class ScheduleService {
 
     //150000 - co 2,5 min
     //600000 - co 10 min
-    @Scheduled(fixedDelay = 600000)
+    //@Scheduled(fixedDelay = 600000)
     public void doIt() {
         log.debug("run...");
         try {

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.enums.CoGdzie;
+import xyz.mail.EmailUsingGMailSMTPService;
 import xyz.parsers.GumtreeParser;
 import xyz.parsers.OlxParser;
 
@@ -25,6 +26,8 @@ public class Controller {
     private GumtreeParser gumtreeParser;
     @Autowired
     private OlxParser olxParser;
+    @Autowired
+    private EmailUsingGMailSMTPService mailService;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -35,6 +38,7 @@ public class Controller {
 //        String targowekGumtreeUrl = CoGdzie.GUMTREE.getUrl();
 //        return gumtreeParser.parse(targowekGumtreeUrl);
         //sender.send(null);
+        mailService.send("Test","Testowa wiadomość");
         return null;
     }
 
