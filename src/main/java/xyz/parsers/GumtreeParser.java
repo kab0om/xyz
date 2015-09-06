@@ -1,4 +1,4 @@
-package xyz;
+package xyz.parsers;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.CoGdzie;
+import xyz.Row;
+import xyz.RowRepository;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -27,10 +30,10 @@ public class GumtreeParser implements Parsable {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public Collection parse(String url) throws IOException{
+    public Collection parse(CoGdzie coGdzie) throws IOException{
         boolean pierwszeUruchomienie = false;
         idki.clear();
-        Document doc = Jsoup.connect(url).get();
+        Document doc = Jsoup.connect(coGdzie.getUrl()).get();
         Elements links = doc.select("section div div div ul li");
         Elements links2 = links.select("div.result-link");
 
@@ -47,6 +50,7 @@ public class GumtreeParser implements Parsable {
         for (Element element : links) {
             //System.out.format("%s %s %s\n", element.text(), element.attr("href"), element.attr("data-adid"));
             Row r = new Row();
+            r.setFilter(coGdzie.name());
             if(element.attr("data-adid") != null && !element.attr("data-adid").isEmpty()) {
                 r.setId(new BigInteger(element.attr("data-adid").substring(0,17)));
             }

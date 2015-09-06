@@ -1,4 +1,6 @@
-package xyz;
+package xyz.parsers;
+
+import xyz.CoGdzie;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -7,5 +9,5 @@ import java.util.Collection;
  * Created by kab00m on 03.09.15.
  */
 public interface Parsable {
-    Collection parse(String url) throws IOException;
+    Collection parse(CoGdzie coGdzie) throws IOException;
 }

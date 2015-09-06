@@ -11,6 +11,8 @@ import java.math.BigInteger;
 @Table(name = "MyTable")
 public class Row implements Serializable {
 
+    @Column(length = 128)
+    private String filter;
     @Id
     @Column(length = 50)
     private BigInteger id;
@@ -26,6 +28,14 @@ public class Row implements Serializable {
     private String creationDate;
     @Column(length = 255)
     private String categoryLocation;
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
 
     public BigInteger getId() {
         return id;
@@ -87,7 +97,8 @@ public class Row implements Serializable {
     public String toString() {
         return "Row{" +
                 "id=" + id +
-                "\n, creationDate='" + creationDate + '\'' +
+                "\n filter=" + filter +
+                ", creationDate='" + creationDate + '\'' +
                 ", price='" + price + '\'' +
                 ", categoryLocation='" + categoryLocation + '\'' +
                 "\n, title='" + title + '\'' +
