@@ -32,7 +32,7 @@ public class ScheduleService {
 
     //150000 - co 2,5 min
     //600000 - co 10 min
-    //@Scheduled(fixedDelay = 600000)
+    @Scheduled(fixedDelay = 600000)
     public void doIt() {
         log.debug("run...");
         Collection rows = new ArrayList<Row>();
@@ -46,7 +46,7 @@ public class ScheduleService {
         }
         if (!rows.isEmpty()) {
             String subject = "test";
-            StringBuilder messageBody = new StringBuilder("<ul>");
+            StringBuilder messageBody = new StringBuilder();
             List<Row> wiersze = (ArrayList<Row>)rows;
             for(Row r : wiersze) {
                 messageBody.append(r.toString());
